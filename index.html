@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Log App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="text-center">✈️ Travel Log App</h1>
+        
+        <!-- Menu Navigasi -->
+        <div class="navbar">
+            <button onclick="showPage('add')" id="btn-add" class="nav-btn">+ Tambah</button>
+            <button onclick="showPage('view')" id="btn-view" class="nav-btn">📋 Lihat</button>
+            <button onclick="showPage('edit')" id="btn-edit" class="nav-btn">✏️ Ubah</button>
+            <button onclick="showPage('delete')" id="btn-delete" class="nav-btn">🗑️ Hapus</button>
+            <button onclick="showPage('rekom')" id="btn-rekom" class="nav-btn">🎯 Rekomendasi</button>
+            <button onclick="showPage('statistik')" id="btn-statistik" class="nav-btn">📊 Statistik</button>
+        </div>
+
+        <!-- SECTION: TAMBAH CATATAN -->
+        <div id="page-add" class="section">
+            <h2>➕ Tambah Catatan Perjalanan</h2>
+            <form onsubmit="handleAdd(event)">
+                <div class="form-group">
+                    <label>Tanggal</label>
+                    <input type="date" id="inp-tanggal" required>
+                </div>
+                <div class="form-group">
+                    <label>Tujuan</label>
+                    <input type="text" id="inp-tujuan" placeholder="Contoh: Bali" required>
+                </div>
+                <div class="form-group">
+                    <label>Keperluan</label>
+                    <input type="text" id="inp-keperluan" placeholder="Contoh: Liburan" required>
+                </div>
+                <div class="form-group">
+                    <label>Biaya (Rp)</label>
+                    <input type="number" id="inp-biaya" placeholder="Contoh: 2500000" required>
+                </div>
+                <button type="submit" class="btn-primary">💾 Simpan Catatan</button>
+            </form>
+        </div>
+
+        <!-- SECTION: LIHAT CATATAN -->
+        <div id="page-view" class="section">
+            <h2>📋 Daftar Perjalanan</h2>
+            <div class="controls">
+                <input type="text" id="search-input" placeholder="🔍 Cari tujuan..." onkeyup="searchData()">
+                <button onclick="sortData(true)" class="btn-small">⬆️ Termurah</button>
+                <button onclick="sortData(false)" class="btn-small">⬇️ Termahal</button>
+            </div>
+            <table id="table-view">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Tujuan</th>
+                        <th>Keperluan</th>
+                        <th>Biaya</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+            </table>
+        </div>
+
+        <!-- SECTION: UBAH CATATAN -->
+        <div id="page-edit" class="section">
+            <h2>✏️ Ubah Catatan</h2>
+            <div class="form-group">
+                <label>Pilih Data</label>
+                <select id="edit-select-index" onchange="fillEditForm()">
+                    <option value="">-- Pilih Nomor --</option>
+                </select>
+            </div>
+            <hr>
+            <form onsubmit="handleUpdate(event)">
+                <input type="hidden" id="edit-index">
+                <div class="form-group">
+                    <label>Tanggal</label>
+                    <input type="date" id="edit-tanggal">
+                </div>
+                <div class="form-group">
+                    <label>Tujuan</label>
+                    <input type="text" id="edit-tujuan">
+                </div>
+                <div class="form-group">
+                    <label>Keperluan</label>
+                    <input type="text" id="edit-keperluan">
+                </div>
+                <div class="form-group">
+                    <label>Biaya</label>
+                    <input type="number" id="edit-biaya">
+                </div>
+                <button type="submit" class="btn-primary">🔄 Update Data</button>
+            </form>
+        </div>
+
+        <!-- SECTION: HAPUS CATATAN -->
+        <div id="page-delete" class="section">
+            <h2>🗑️ Hapus Catatan</h2>
+            <div class="form-group">
+                <label>Pilih Data yang Ingin Dihapus</label>
+                <select id="delete-select-index">
+                    <option value="">-- Pilih Nomor --</option>
+                </select>
+            </div>
+            <button onclick="handleDelete()" class="btn-danger">🗑️ Hapus Sekarang</button>
+        </div>
+
+        <!-- SECTION: REKOMENDASI -->
+        <div id="page-rekom" class="section">
+            <h2>🎯 Rekomendasi Destinasi</h2>
+            <div class="form-group">
+                <label>Masukkan Budget Maksimal</label>
+                <input type="number" id="budget-input" placeholder="Contoh: 2000000">
+            </div>
+            <button onclick="rekomendasiDestinasi()" class="btn-primary">🔍 Cari</button>
+            <div id="rekomendasi-result"></div>
+        </div>
+
+        <!-- SECTION: STATISTIK -->
+        <div id="page-statistik" class="section">
+            <h2>📊 Statistik Perjalanan</h2>
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>Total Trip</h3>
+                    <p id="stat-total-trip">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Biaya</h3>
+                    <p id="stat-total-biaya">Rp 0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Rata-rata Biaya</h3>
+                    <p id="stat-rata-biaya">Rp 0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Tujuan Fav</h3>
+                    <p id="stat-fav">-</p>
+                </div>
+            </div>
+            <button onclick="resetAllData()" class="btn-danger mt-2">⚠️ Reset Semua Data</button>
+        </div>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">Berhasil!</div>
+
+    <script src="script.js"></script>
+</body>
+</html>
