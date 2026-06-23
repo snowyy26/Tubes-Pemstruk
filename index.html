@@ -1,156 +1,205 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travel Log App</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KalimTrip — Wisata Kalimantan Timur</title>
+  <meta name="description" content="Platform rekomendasi wisata Kalimantan Timur — temukan destinasi alam, budaya, dan bahari terbaik di jantung Borneo." />
+
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-    <div class="container">
-        <h1 class="text-center">✈️ Travel Log App</h1>
-        
-        <!-- Menu Navigasi -->
-        <div class="navbar">
-            <button onclick="showPage('add')" id="btn-add" class="nav-btn">+ Tambah</button>
-            <button onclick="showPage('view')" id="btn-view" class="nav-btn">📋 Lihat</button>
-            <button onclick="showPage('edit')" id="btn-edit" class="nav-btn">✏️ Ubah</button>
-            <button onclick="showPage('delete')" id="btn-delete" class="nav-btn">🗑️ Hapus</button>
-            <button onclick="showPage('rekom')" id="btn-rekom" class="nav-btn">🎯 Rekomendasi</button>
-            <button onclick="showPage('statistik')" id="btn-statistik" class="nav-btn">📊 Statistik</button>
-        </div>
+<!-- ======================================================
+     NAVBAR
+====================================================== -->
+<nav class="navbar" id="navbar">
+  <a href="#hero" class="logo">
+    <span class="logo-kalim">Kaltim</span><span class="logo-trip">Trip</span>
+  </a>
 
-        <!-- SECTION: TAMBAH CATATAN -->
-        <div id="page-add" class="section">
-            <h2>➕ Tambah Catatan Perjalanan</h2>
-            <form onsubmit="handleAdd(event)">
-                <div class="form-group">
-                    <label>Tanggal</label>
-                    <input type="date" id="inp-tanggal" required>
-                </div>
-                <div class="form-group">
-                    <label>Tujuan</label>
-                    <input type="text" id="inp-tujuan" placeholder="Contoh: Bali" required>
-                </div>
-                <div class="form-group">
-                    <label>Keperluan</label>
-                    <input type="text" id="inp-keperluan" placeholder="Contoh: Liburan" required>
-                </div>
-                <div class="form-group">
-                    <label>Biaya (Rp)</label>
-                    <input type="number" id="inp-biaya" placeholder="Contoh: 2500000" required>
-                </div>
-                <button type="submit" class="btn-primary">💾 Simpan Catatan</button>
-            </form>
-        </div>
-
-        <!-- SECTION: LIHAT CATATAN -->
-        <div id="page-view" class="section">
-            <h2>📋 Daftar Perjalanan</h2>
-            <div class="controls">
-                <input type="text" id="search-input" placeholder="🔍 Cari tujuan..." onkeyup="searchData()">
-                <button onclick="sortData(true)" class="btn-small">⬆️ Termurah</button>
-                <button onclick="sortData(false)" class="btn-small">⬇️ Termahal</button>
-            </div>
-            <table id="table-view">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Tujuan</th>
-                        <th>Keperluan</th>
-                        <th>Biaya</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body"></tbody>
-            </table>
-        </div>
-
-        <!-- SECTION: UBAH CATATAN -->
-        <div id="page-edit" class="section">
-            <h2>✏️ Ubah Catatan</h2>
-            <div class="form-group">
-                <label>Pilih Data</label>
-                <select id="edit-select-index" onchange="fillEditForm()">
-                    <option value="">-- Pilih Nomor --</option>
-                </select>
-            </div>
-            <hr>
-            <form onsubmit="handleUpdate(event)">
-                <input type="hidden" id="edit-index">
-                <div class="form-group">
-                    <label>Tanggal</label>
-                    <input type="date" id="edit-tanggal">
-                </div>
-                <div class="form-group">
-                    <label>Tujuan</label>
-                    <input type="text" id="edit-tujuan">
-                </div>
-                <div class="form-group">
-                    <label>Keperluan</label>
-                    <input type="text" id="edit-keperluan">
-                </div>
-                <div class="form-group">
-                    <label>Biaya</label>
-                    <input type="number" id="edit-biaya">
-                </div>
-                <button type="submit" class="btn-primary">🔄 Update Data</button>
-            </form>
-        </div>
-
-        <!-- SECTION: HAPUS CATATAN -->
-        <div id="page-delete" class="section">
-            <h2>🗑️ Hapus Catatan</h2>
-            <div class="form-group">
-                <label>Pilih Data yang Ingin Dihapus</label>
-                <select id="delete-select-index">
-                    <option value="">-- Pilih Nomor --</option>
-                </select>
-            </div>
-            <button onclick="handleDelete()" class="btn-danger">🗑️ Hapus Sekarang</button>
-        </div>
-
-        <!-- SECTION: REKOMENDASI -->
-        <div id="page-rekom" class="section">
-            <h2>🎯 Rekomendasi Destinasi</h2>
-            <div class="form-group">
-                <label>Masukkan Budget Maksimal</label>
-                <input type="number" id="budget-input" placeholder="Contoh: 2000000">
-            </div>
-            <button onclick="rekomendasiDestinasi()" class="btn-primary">🔍 Cari</button>
-            <div id="rekomendasi-result"></div>
-        </div>
-
-        <!-- SECTION: STATISTIK -->
-        <div id="page-statistik" class="section">
-            <h2>📊 Statistik Perjalanan</h2>
-            <div class="stats-container">
-                <div class="stat-card">
-                    <h3>Total Trip</h3>
-                    <p id="stat-total-trip">0</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Total Biaya</h3>
-                    <p id="stat-total-biaya">Rp 0</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Rata-rata Biaya</h3>
-                    <p id="stat-rata-biaya">Rp 0</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Tujuan Fav</h3>
-                    <p id="stat-fav">-</p>
-                </div>
-            </div>
-            <button onclick="resetAllData()" class="btn-danger mt-2">⚠️ Reset Semua Data</button>
-        </div>
-
+  <div class="nav-right">
+    <div class="nav-links">
+      <a href="#destinasi" data-i18n="navDest">Destinasi</a>
+      <a href="#footer"    data-i18n="navAbout">Tentang</a>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast" class="toast">Berhasil!</div>
+    <div class="lang-toggle" role="group" aria-label="Pilih Bahasa">
+      <button class="lang-btn active" data-lang="id">ID</button>
+      <span class="lang-sep">|</span>
+      <button class="lang-btn" data-lang="en">EN</button>
+    </div>
+  </div>
+</nav>
 
-    <script src="script.js"></script>
+<!-- ======================================================
+     HERO
+====================================================== -->
+<section class="hero" id="hero">
+
+  <!-- Ilustrasi SVG: bulan + rumah Lamin Dayak -->
+  <div class="hero-illustration" aria-hidden="true">
+    <svg viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet">
+      <!-- Bulan / Matahari -->
+      <circle cx="680" cy="130" r="110" fill="#8a7a1a" opacity="0.55"/>
+      <!-- Tanah / Ground -->
+      <ellipse cx="580" cy="490" rx="420" ry="60" fill="#1a110a" opacity="0.7"/>
+      <!-- Badan Rumah Lamin -->
+      <rect x="340" y="310" width="480" height="190" rx="4" fill="#1e120a"/>
+      <!-- Atap Segitiga Besar (Lamin) -->
+      <polygon points="320,310 800,310 560,130" fill="#7a2a1a"/>
+      <!-- Atap Inner shadow -->
+      <polygon points="340,310 780,310 560,155" fill="#6b2318"/>
+      <!-- Tiang rumah kiri -->
+      <rect x="360" y="370" width="22" height="130" rx="3" fill="#120c06"/>
+      <!-- Tiang rumah tengah kiri -->
+      <rect x="470" y="370" width="22" height="130" rx="3" fill="#120c06"/>
+      <!-- Tiang rumah tengah kanan -->
+      <rect x="580" y="370" width="22" height="130" rx="3" fill="#120c06"/>
+      <!-- Tiang rumah kanan -->
+      <rect x="700" y="370" width="22" height="130" rx="3" fill="#120c06"/>
+      <!-- Pintu tengah -->
+      <rect x="538" y="400" width="50" height="100" rx="3" fill="#0d0806"/>
+      <!-- Jendela kiri -->
+      <rect x="400" y="390" width="42" height="38" rx="3" fill="#0d0806"/>
+      <!-- Jendela kanan -->
+      <rect x="648" y="390" width="42" height="38" rx="3" fill="#0d0806"/>
+      <!-- Tangga bawah -->
+      <rect x="550" y="495" width="6" height="15" fill="#1e120a"/>
+      <rect x="530" y="498" width="46" height="5" rx="2" fill="#2a1a0e"/>
+      <rect x="524" y="503" width="58" height="5" rx="2" fill="#2a1a0e"/>
+      <!-- Dekorasi atap puncak -->
+      <line x1="560" y1="130" x2="560" y2="105" stroke="#c8922a" stroke-width="3"/>
+      <polygon points="560,100 553,115 567,115" fill="#c8922a"/>
+    </svg>
+  </div>
+
+  <!-- Konten teks -->
+  <div class="hero-content">
+    <span class="hero-eyebrow" data-i18n="heroEyebrow">Provinsi Kalimantan Timur</span>
+    <h1 data-i18n="heroTitle">Temukan Sisi<br/>Borneo<br/><span>yang Jarang Terlihat</span></h1>
+    <p data-i18n="heroSubtitle">
+      KaltimTrip merangkum destinasi terbaik di Kalimantan Timur — dari
+      laut Derawan sampai rimba Bukit Bangkirai.
+    </p>
+    <a href="#destinasi" class="btn-jelajah">
+      <span data-i18n="heroBtn">Jelajahi Destinasi ↓</span>
+    </a>
+  </div>
+
+</section>
+
+<!-- ======================================================
+     DESTINASI
+====================================================== -->
+<section id="destinasi">
+  <div class="container">
+
+    <div class="section-head" data-reveal>
+      <h2 data-i18n="destTitle">Destinasi Unggulan</h2>
+      <p data-i18n="destSubtitle">
+        Pilih destinasi yang sesuai dengan semangat petualanganmu —
+        dari belantara hutan hingga keindahan bawah laut.
+      </p>
+    </div>
+
+    <div class="filter-wrap" data-reveal>
+      <div class="filter-row">
+        <span class="filter-label" data-i18n="filterCity">Filter Kota:</span>
+        <div class="pills" id="city-pills"></div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label" data-i18n="filterCat">Kategori:</span>
+        <div class="pills" id="cat-pills"></div>
+      </div>
+    </div>
+
+    <div class="dest-grid" id="dest-grid"></div>
+
+  </div>
+</section>
+
+<!-- Motif Divider -->
+<div class="motif-line" aria-hidden="true"></div>
+
+<!-- ======================================================
+     FOOTER
+====================================================== -->
+<footer class="footer">
+  <div class="footer-container">
+
+    <!-- Brand -->
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <div class="logo-icon">🌿</div>
+        <em style="color:var(--emas);font-style:normal;">Kalim</em><span style="color:var(--krem)">Trip</span>
+      </div>
+      <p data-i18n="footerTagline">
+        Sebagai platform wisatawan, kami merekomendasikan tempat-tempat terbaik
+        untuk menjelajahi destinasi di Kalimantan Timur.
+      </p>
+    </div>
+
+    <!-- Kontak Kami -->
+    <div class="footer-col">
+      <h4 data-i18n="footerContact">Kontak Kami</h4>
+      <ul>
+        <li>
+          <span class="li-icon">✉</span>
+          <span><span data-i18n="footerEmail">Email</span> : hello@kalimtrip.id</span>
+        </li>
+        <li>
+          <span class="li-icon">📞</span>
+          <span><span data-i18n="footerPhone">Tlp</span> : +62 542 000 000</span>
+        </li>
+        <li>
+          <span class="li-icon">💬</span>
+          <span><span data-i18n="footerWhatsapp">WA</span> : +62 812 3456 7890</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Koneksi / Sosial -->
+    <div class="footer-col">
+      <h4 data-i18n="footerConnect">Koneksi</h4>
+      <div class="footer-social">
+        <!-- Instagram -->
+        <button class="social-btn" title="Instagram" aria-label="Instagram">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.334 3.608 1.31.975.975 1.247 2.242 1.31 3.608.058 1.265.069 1.645.069 4.849s-.012 3.584-.07 4.85c-.062 1.366-.334 2.633-1.31 3.608-.975.975-2.242 1.247-3.608 1.31-1.265.058-1.645.069-4.849.069s-3.584-.012-4.85-.07c-1.366-.062-2.633-.334-3.608-1.31-.975-.975-1.247-2.242-1.31-3.608C2.175 15.747 2.163 15.367 2.163 12s.012-3.584.07-4.85c.062-1.366.334-2.633 1.31-3.608C4.518 2.567 5.785 2.295 7.15 2.233 8.416 2.175 8.796 2.163 12 2.163zm0-2.163c-3.259 0-3.667.014-4.947.072-1.628.074-3.078.5-4.214 1.636C1.703 2.844 1.277 4.294 1.203 5.922 1.145 7.202 1.131 7.61 1.131 12c0 4.39.014 4.798.072 6.078.074 1.628.5 3.078 1.636 4.214 1.136 1.136 2.586 1.562 4.214 1.636 1.28.058 1.688.072 4.947.072s3.667-.014 4.947-.072c1.628-.074 3.078-.5 4.214-1.636 1.136-1.136 1.562-2.586 1.636-4.214.058-1.28.072-1.688.072-4.947s-.014-3.667-.072-4.947c-.074-1.628-.5-3.078-1.636-4.214C19.025 1.703 17.575 1.277 15.947 1.203 14.667 1.145 14.259 1.131 12 1.131zm0 5.838a5.031 5.031 0 100 10.062A5.031 5.031 0 0012 6.969zm0 8.299a3.268 3.268 0 110-6.536 3.268 3.268 0 010 6.536zm6.406-9.623a1.175 1.175 0 100 2.35 1.175 1.175 0 000-2.35z"/>
+          </svg>
+        </button>
+        <!-- Twitter/X -->
+        <button class="social-btn" title="Twitter" aria-label="Twitter">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+        </button>
+        <!-- Facebook -->
+        <button class="social-btn" title="Facebook" aria-label="Facebook">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.413c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+          </svg>
+        </button>
+        <!-- TikTok -->
+        <button class="social-btn" title="TikTok" aria-label="TikTok">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p data-i18n="footerCopyright">© 2026 Hak Milik Mahasiswa Jurusan Sistem Informasi ITK. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="data.js"></script>
+<script src="script.js"></script>
+
 </body>
 </html>
